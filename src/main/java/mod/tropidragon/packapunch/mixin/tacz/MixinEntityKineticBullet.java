@@ -38,14 +38,14 @@ public class MixinEntityKineticBullet implements IMixinEntityKineticBullet {
             BulletData bulletData, CallbackInfo ci) {
 
         this.leveledDamageModifier = Pap.getDamageModifier(gunItem);
-        LOGGER.info("[TEST] leveledDamageModifier: {}", leveledDamageModifier);
+        LOGGER.trace("leveledDamageModifier: {}", leveledDamageModifier);
     }
 
     // 结算伤害倍率
     // calculate damage multiplier
     @ModifyReturnValue(method = "getDamage", at = @At("RETURN"), remap = false)
     public float applyLeveledDamageModifier(float original) {
-        LOGGER.info("[TEST] damage modified from {} to {} (multiplied by {})", original,
+        LOGGER.trace("damage modified from {} to {} (multiplied by {})", original,
                 original * leveledDamageModifier, leveledDamageModifier);
         return original * leveledDamageModifier;
     }
