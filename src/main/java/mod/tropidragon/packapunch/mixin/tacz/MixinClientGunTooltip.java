@@ -1,29 +1,21 @@
 package mod.tropidragon.packapunch.mixin.tacz;
 
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.tacz.guns.api.item.IGun;
+import com.tacz.guns.client.tooltip.ClientGunTooltip;
+
+import mod.tropidragon.packapunch.common.Pap;
+import mod.tropidragon.packapunch.common.internal.IMixinModernKineticGunItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.item.ItemStack;
-import com.tacz.guns.api.item.IGun;
-import com.tacz.guns.resource.pojo.data.gun.GunData;
-import com.tacz.guns.client.tooltip.ClientGunTooltip;
-import com.tacz.guns.item.GunTooltipPart;
-
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import com.llamalad7.mixinextras.sugar.Local;
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-
-import mod.tropidragon.packapunch.common.Pap;
-import mod.tropidragon.packapunch.common.internal.IMixinModernKineticGunItem;
 import net.minecraft.world.item.ItemStack;
 
 @Mixin(ClientGunTooltip.class)
@@ -51,18 +43,18 @@ public class MixinClientGunTooltip {
         }
     }
 
-    @Shadow
+    @Shadow(remap = false)
     @Final
     private ItemStack gun;
 
-    @Shadow
+    @Shadow(remap = false)
     @Final
     private IGun iGun;
 
-    @Shadow
+    @Shadow(remap = false)
     private MutableComponent levelInfo;
 
-    @Shadow
+    @Shadow(remap = false)
     private int maxWidth;
 
     // @Shadow
@@ -89,28 +81,28 @@ public class MixinClientGunTooltip {
 
     // ===1.0.3===
     // 显示计算过超改倍率的伤害
+    @SuppressWarnings("null")
     @ModifyExpressionValue(method = "getText", at = @At(value = "INVOKE", target = "Lcom/tacz/guns/util/AttachmentDataUtils;getDamageWithAttachment(Lnet/minecraft/world/item/ItemStack;Lcom/tacz/guns/resource/pojo/data/gun/GunData;)D", remap = false), remap = false)
     public double applyLeveledDamageModifier(double original) {
 
         // 覆写枪械等级，用于显示 稀有度 和 超改等级
-        {
-            int papLevel = ((IMixinModernKineticGunItem) (Object) iGun).getPaPLevel(gun);
-            int rarityLevel = ((IMixinModernKineticGunItem) (Object) iGun).getRarityLevel(gun);
+        // overrides weapon rarity, used to display rarity and upgrade level
 
-            // String papTier = Pap.getPaPTierSymbol(papLevel);
-            String papTier = String.format("[%s]", Pap.getPaPTierSymbol(papLevel));
-            String rarityTier = Pap.getRarityTierSymbol(rarityLevel);
+        int papLevel = ((IMixinModernKineticGunItem) this.iGun).getPaPLevel(this.gun);
+        int rarityLevel = ((IMixinModernKineticGunItem) this.iGun).getRarityLevel(this.gun);
 
-            this.levelInfo = (Component.translatable("tooltip.tacz.gun.level"))
-                    .append((Component.literal(rarityTier)).withStyle(getRarityColor(rarityLevel)))
-                    .append(" ")
-                    .append((Component.literal(papTier)).withStyle(ChatFormatting.WHITE));
+        // String papTier = Pap.getPaPTierSymbol(papLevel);
+        String papTier = String.format("[%s]", Pap.getPaPTierSymbol(papLevel));
+        String rarityTier = Pap.getRarityTierSymbol(rarityLevel);
 
-            Font font = Minecraft.getInstance().font;
-            this.maxWidth = Math.max(font.width(this.levelInfo), this.maxWidth);
-        }
+        this.levelInfo = (Component.translatable("tooltip.tacz.gun.level"))
+                .append((Component.literal(rarityTier)).withStyle(getRarityColor(rarityLevel)))
+                .append(" ")
+                .append((Component.literal(papTier)).withStyle(ChatFormatting.WHITE));
 
-        return original * Pap.getDamageModifier(gun);
+        Font font = Minecraft.getInstance().font;
+        this.maxWidth = Math.max(font.width(this.levelInfo), this.maxWidth);
+
+        return original * (double) Pap.getDamageModifier(gun);
     }
-
 }

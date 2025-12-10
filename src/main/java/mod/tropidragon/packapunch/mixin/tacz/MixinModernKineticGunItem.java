@@ -33,8 +33,8 @@ import com.tacz.guns.resource.pojo.data.gun.GunData;
 @Mixin(ModernKineticGunItem.class)
 public class MixinModernKineticGunItem implements IMixinModernKineticGunItem {
 
-    String GUN_RARITY_TAG = "GunRarityLevel";
-    String GUN_PAP_TAG = "GunPaPLevel";
+    final String GUN_RARITY_TAG = "GunRarityLevel";
+    final String GUN_PAP_TAG = "GunPaPLevel";
 
     @Override
     public int getRarityLevel(ItemStack gunItem) {

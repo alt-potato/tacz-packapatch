@@ -57,11 +57,13 @@ public class Divinium {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CommonConfig.init());
     }
 
+    @SuppressWarnings("unused")
     private void setup(final FMLCommonSetupEvent event) {
         // some preinit code
         LOGGER.info("HELLO FROM PREINIT");
     }
 
+    @SuppressWarnings("unused")
     private void enqueueIMC(final InterModEnqueueEvent event) {
         // Some example code to dispatch IMC to another mod
         InterModComms.sendTo("packapunch", "helloworld", () -> {
@@ -70,6 +72,7 @@ public class Divinium {
         });
     }
 
+    @SuppressWarnings("unused")
     private void processIMC(final InterModProcessEvent event) {
         // Some example code to receive and process InterModComms from other mods
         LOGGER.info("Got IMC {}",
