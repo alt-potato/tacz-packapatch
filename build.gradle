@@ -23,7 +23,7 @@ apply plugin: 'eclipse'
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'java'
 
-version = '0.0.5'
+version = '0.0.6'
 group = 'mod.tropidragon' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'packapunch-1.20.1'
 
